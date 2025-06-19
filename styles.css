@@ -732,8 +732,7 @@ body {
     margin-bottom: 4px;
   }
   
-  .thumb-button:hover::before {
-    content: \'
+  .thumb-button:hover::before {  content: '';
     position: absolute;
     bottom: 100%;
     left: 50%;

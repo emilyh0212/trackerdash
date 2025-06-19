@@ -685,3 +685,58 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('suppressNotes').value = '';
   }
   
+  
+    // Chart initialization
+    function initializeCharts() {
+      const flaggedItemsCtx = document.getElementById('flaggedItemsTrendChart').getContext('2d');
+      new Chart(flaggedItemsCtx, {
+        type: 'line',
+        data: {
+          labels: ['May', 'June', 'July'],
+          datasets: [{
+            label: 'Flagged Items',
+            data: [10, 15, 12],
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+  
+      const dollarImpactCtx = document.getElementById('dollarImpactTrendChart').getContext('2d');
+      new Chart(dollarImpactCtx, {
+        type: 'line',
+        data: {
+          labels: ['May', 'June', 'July'],
+          datasets: [{
+            label: 'Dollar Impact',
+            data: [5000, 7500, 6000],
+            borderColor: 'rgb(255, 99, 132)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  
+    // Call initializeCharts when the DOM is loaded
+    initializeCharts();
+  
+  
+  
