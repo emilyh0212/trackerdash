@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mid-Month Deviation Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Mid-Month Deviation Dashboard</h1>
+      <div class="date-display">June 2025 (Day 19 of 30)</div>
+    </div>
+    
+    <div class="metrics-container">
+      <div class="metric-card">
+        <div class="metric-title">Overall Deviation</div>
+        <div class="metric-value deviation-positive">+12.5%</div>
+        <div class="metric-trend trend-up">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          5.2% since last week
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Items with Significant Deviation</div>
+        <div class="metric-value">24</div>
+        <div class="metric-trend trend-up">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          8 new since last week
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Actions Taken</div>
+        <div class="metric-value">7</div>
+        <div class="metric-trend">
+          29% of flagged items
+        </div>
+      </div>
+    </div>
+    
+    <div class="trend-chart">
+      <div class="trend-chart-title">Flagged Items Trend</div>
+      <div class="chart-container">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+    
+    <div class="filters-container">
+      <div class="filter-group">
+        <label class="filter-label">Rule</label>
+        <select class="filter-select">
+          <option value="all">All Rules</option>
+          <option value="rule1">Rule 1: Forecast Breach</option>
+          <option value="rule2">Rule 2: Early Month Acceleration</option>
+          <option value="rule3">Rule 3: Flat → Spike Pattern</option>
+          <option value="rule4">Rule 4: Forecast Undershoot</option>
+          <option value="rule5">Rule 5: Multi-SKU Spike</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label">Severity</label>
+        <select class="filter-select">
+          <option value="all">All Severities</option>
+          <option value="critical">Critical</option>
+          <option value="warning">Warning</option>
+          <option value="ontrack">On Track</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label">Tenant</label>
+        <select class="filter-select">
+          <option value="all">All Tenants</option>
+          <option value="behler-young">Behler-Young</option>
+          <option value="worldwide-electric">Worldwide Electric</option>
+          <option value="other-tenant">Other Tenant</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select class="filter-select">
+          <option value="all">All</option>
+          <option value="unresolved">Unresolved</option>
+          <option value="actioned">Actioned</option>
+          <option value="suppressed">Suppressed</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label">Demand Pattern</label>
+        <select class="filter-select">
+          <option value="all">All Patterns</option>
+          <option value="smooth">Smooth</option>
+          <option value="sparse">Sparse</option>
+          <option value="new">New</option>
+          <option value="no-demand">No Demand</option>
+        </select>
+      </div>
+      
+      <div class="filter-group" style="margin-left: auto;">
+        <label class="filter-label">&nbsp;</label>
+        <button class="action-button">Export to CSV</button>
+      </div>
+    </div>
+    
+    <div class="table-container">
+      <table class="deviation-table">
+        <thead>
+          <tr>
+            <th>Item ID / Description</th>
+            <th>Rule</th>
+            <th>Forecast</th>
+            <th>MTD Usage</th>
+            <th>Deviation</th>
+            <th>Day Flagged</th>
+            <th>Demand Pattern</th>
+            <th>Status</th>
+            <th>Action Taken</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div>SKU-12345</div>
+              <div style="font-size: 12px; color: #6B778C;">HVAC Filter 20x20x1</div>
+            </td>
+            <td><span class="badge badge-rule1">Rule 1</span></td>
+            <td>$24,500</td>
+            <td>$32,650</td>
+            <td class="deviation-positive">+33.3%</td>
+            <td>June 13</td>
+            <td>Smooth</td>
+            <td><span class="status-indicator status-critical"></span>Critical</td>
+            <td><span class="badge badge-actioned">Yes</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="toggle-details">
+                  Details
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toggle-icon">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr class="expandable-row">
+            <td colspan="10">
+              <div class="expandable-content">
+                <div class="expandable-section">
+                  <div class="expandable-title">Flag Details</div>
+                  <div class="expandable-value">
+                    <div><strong>Flag ID:</strong> f1a2b3c4-5d6e-7f8g-9h0i-j1k2l3m4n5o6</div>
+                    <div><strong>Tenant:</strong> Behler-Young</div>
+                    <div><strong>Location:</strong> KDC</div>
+                    <div><strong>Severity:</strong> Critical</div>
+                    <div><strong>Suppressed:</strong> No</div>
+                  </div>
+                </div>
+                
+                <div class="expandable-section">
+                  <div class="expandable-title">Rule Information</div>
+                  <div class="expandable-value">
+                    <div><strong>Rule:</strong> Rule 1: Forecast Breach</div>
+                    <div><strong>Trigger:</strong> MTD Usage > Forecast before Day 20</div>
+                    <div><strong>Suggested Action:</strong> Raise Min/Max</div>
+                  </div>
+                </div>
+                
+                <div class="expandable-section">
+                  <div class="expandable-title">Action History</div>
+                  <div class="expandable-value">
+                    <div><strong>June 14:</strong> Min/Max raised by 25%</div>
+                    <div><strong>User:</strong> John Smith</div>
+                    <div><strong>Notes:</strong> Seasonal demand spike due to summer heat wave</div>
+                  </div>
+                </div>
+                
+                <div class="expandable-section">
+                  <div class="expandable-title">Annotated Reason</div>
+                  <div class="expandable-value">
+                    <div>Seasonal demand spike due to summer heat wave</div>
+                    <div><span class="tag">seasonal</span> <span class="tag">weather</span></div>
+                  </div>
+                </div>
+                
+                <div class="comment-section">
+                  <div class="comment-input">
+                    <input type="text" class="form-input" placeholder="Add a comment...">
+                    <button class="action-button">Add</button>
+                  </div>
+                  <div class="comment-list">
+                    <div class="comment-item">
+                      <div class="comment-header">
+                        <div><strong>John Smith</strong></div>
+                        <div>June 14, 2025 10:23 AM</div>
+                      </div>
+                      <div class="comment-text">Raised min/max by 25% due to unexpected heat wave in the region.</div>
+                    </div>
+                    <div class="comment-item">
+                      <div class="comment-header">
+                        <div><strong>Sarah Johnson</strong></div>
+                        <div>June 13, 2025 4:15 PM</div>
+                      </div>
+                      <div class="comment-text">Confirmed with supplier that they can handle increased volume.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          
+          <tr>
+            <td>
+              <div>SKU-67890</div>
+              <div style="font-size: 12px; color: #6B778C;">Compressor 2.5 Ton</div>
+            </td>
+            <td><span class="badge badge-rule2">Rule 2</span></td>
+            <td>$18,200</td>
+            <td>$22,750</td>
+            <td class="deviation-positive">+25.0%</td>
+            <td>June 8</td>
+            <td>Smooth</td>
+            <td><span class="status-indicator status-warning"></span>Warning</td>
+            <td><span class="badge badge-actioned">Yes</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="toggle-details">
+                  Details
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toggle-icon">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr class="expandable-row">
+            <td colspan="10">
+              <div class="expandable-content">
+                <div class="expandable-section">
+                  <div class="expandable-title">Flag Details</div>
+                  <div class="expandable-value">
+                    <div><strong>Flag ID:</strong> a1b2c3d4-5e6f-7g8h-9i0j-k1l2m3n4o5p6</div>
+                    <div><strong>Tenant:</strong> Behler-Young</div>
+                    <div><strong>Location:</strong> KDC</div>
+                    <div><strong>Severity:</strong> Warning</div>
+                    <div><strong>Suppressed:</strong> No</div>
+                  </div>
+                </div>
+                
+                <div class="expandable-section">
+                  <div class="expandable-title">Rule Information</div>
+                  <div class="expandable-value">
+                    <div><strong>Rule:</strong> Rule 2: Early Month Acceleration</div>
+                    <div><strong>Trigger:</strong> Day < 10 and usage > 60% of forecast</div>
+                    <div><strong>Suggested Action:</strong> Override Forecast</div>
+                  </div>
+                </div>
+                
+                <div class="expandable-section">
+                  <div class="expandable-title">Action History</div>
+                  <div class="expandable-value">
+                    <div><strong>June 9:</strong> Forecast overridden to 30,000</div>
+                    <div><strong>User:</strong> Sarah Johnson</div>
+                    <div><strong>Notes:</strong> Large contractor project started early</div>
+                  </div>
+                </div>
+                
+                <div class="expandable-section">
+                  <div class="expandable-title">Annotated Reason</div>
+                  <div class="expandable-value">
+                    <div>Large contractor project started early</div>
+                    <div><span class="tag">contractor</span> <span class="tag">project</span></div>
+                  </div>
+                </div>
+                
+                <div class="comment-section">
+                  <div class="comment-input">
+                    <input type="text" class="form-input" placeholder="Add a comment...">
+                    <button class="action-button">Add</button>
+                  </div>
+                  <div class="comment-list">
+                    <div class="comment-item">
+                      <div class="comment-header">
+                        <div><strong>Sarah Johnson</strong></div>
+                        <div>June 9, 2025 11:45 AM</div>
+                      </div>
+                      <div class="comment-text">Spoke with sales team. This is for the Johnson Construction project that started earlier than expected.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          
+          <tr>
+            <td>
+              <div>SKU-54321</div>
+              <div style="font-size: 12px; color: #6B778C;">Thermostat Smart WiFi</div>
+            </td>
+            <td><span class="badge badge-rule4">Rule 4</span></td>
+            <td>$15,800</td>
+            <td>$9,480</td>
+            <td class="deviation-negative">-40.0%</td>
+            <td>June 22</td>
+            <td>Smooth</td>
+            <td><span class="status-indicator status-critical"></span>Critical</td>
+            <td>No</td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-button" onclick="openActionModal('SKU-54321')">Take Action</button>
+                <button class="action-button secondary" onclick="openSuppressModal('SKU-54321')">Suppress</button>
+              </div>
+            </td>
+          </tr>
+          
+          <tr>
+            <td>
+              <div>SKU-98765</div>
+              <div style="font-size: 12px; color: #6B778C;">Air Handler 3 Ton</div>
+            </td>
+            <td><span class="badge badge-rule1">Rule 1</span></td>
+            <td>$32,100</td>
+            <td>$30,495</td>
+            <td class="deviation-negative">-5.0%</td>
+            <td>June 15</td>
+            <td>Smooth</td>
+            <td><span class="status-indicator status-ontrack"></span>On Track</td>
+            <td>No</td>
+            <td>
+              <div class="action-buttons">
+                <button class="toggle-details">
+                  Details
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toggle-icon">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          
+          <tr>
+            <td>
+              <div>SKU-13579</div>
+              <div style="font-size: 12px; color: #6B778C;">Refrigerant R410A</div>
+            </td>
+            <td><span class="badge badge-rule3">Rule 3</span></td>
+            <td>$8,400</td>
+            <td>$12,600</td>
+            <td class="deviation-positive">+50.0%</td>
+            <td>June 17</td>
+            <td>Sparse</td>
+            <td><span class="status-indicator status-warning"></span>Warning</td>
+            <td><span class="badge badge-suppressed">Suppressed</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="toggle-details">
+                  Details
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toggle-icon">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr class="expandable-row">
+            <td colspan="10">
+              <div class="expandable-content">
+                <div class="expandable-section">
+                  <div class="expandable-title">Flag Details</div>
+                  <div class="expandable-value">
+                    <div><strong>Flag ID:</strong> p1o2n3m4-5l6k-7j8i-9h0g-f1e2d3c4b5a6</div>
+                    <div><strong>Tenant:</strong> Worldwide Electric</div>
+                    <div><strong>Location:</strong> Main Warehouse</div>
+                    <div><strong>Severity:</strong> Warning</div>
+                    <div><strong>Suppressed:</strong> Yes</div>
+                  </div>
+                </div>
+                
+                <div class="expandable-section">
+                  <div class="expandable-title">Rule Information</div>
+                  <div class="expandable-value">
+                    <div><strong>Rule:</strong> Rule 3: Flat → Spike Pattern</div>
+                    <div><strong>Trigger:</strong> Sparse item received second order in month</div>
+                    <div><strong>Suggested Action:</strong> Review demand pattern</div>
+                  </div>
+                </div>
+                
+                <div class="expandable-section">
+                  <div class="expandable-title">Suppression Details</div>
+                  <div class="expandable-value">
+                    <div><strong>Suppressed On:</strong> June 18, 2025</div>
+                    <div><strong>Suppressed By:</strong> Michael Brown</div>
+                    <div><strong>Suppression Reason:</strong> Known one-time bulk order</div>
+                    <div><strong>Suppression Duration:</strong> 30 days</div>
+                  </div>
+                </div>
+                
+                <div class="expandable-section">
+                  <div class="expandable-title">Annotated Reason</div>
+                  <div class="expandable-value">
+                    <div>Bulk order for new construction project</div>
+                    <div><span class="tag">bulk-order</span> <span class="tag">one-time</span></div>
+                  </div>
+                </div>
+                
+                <div class="comment-section">
+                  <div class="comment-input">
+                    <input type="text" class="form-input" placeholder="Add a comment...">
+                    <button class="action-button">Add</button>
+                  </div>
+                  <div class="comment-list">
+                    <div class="comment-item">
+                      <div class="comment-header">
+                        <div><strong>Michael Brown</strong></div>
+                        <div>June 18, 2025 2:30 PM</div>
+                      </div>
+                      <div class="comment-text">Suppressing this flag as it's a known one-time bulk order for the downtown construction project. Not expected to recur.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          
+          <tr>
+            <td>
+              <div>SKU-24680</div>
+              <div style="font-size: 12px; color: #6B778C;">Ductless Mini Split 12K BTU</div>
+            </td>
+            <td><span class="badge badge-rule5">Rule 5</span></td>
+            <td>$45,600</td>
+            <td>$68,400</td>
+            <td class="deviation-positive">+50.0%</td>
+            <td>June 16</td>
+            <td>Smooth</td>
+            <td><span class="status-indicator status-critical"></span>Critical</td>
+            <td>No</td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-button" onclick="openActionModal('SKU-24680')">Take Action</button>
+                <button class="action-button secondary" onclick="openSuppressModal('SKU-24680')">Suppress</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="pagination">
+      <button class="pagination-button">Previous</button>
+      <button class="pagination-button active">1</button>
+      <button class="pagination-button">2</button>
+      <button class="pagination-button">3</button>
+      <button class="pagination-button">Next</button>
+    </div>
+  </div>
+  
+  <!-- Action Modal -->
+  <div id="actionModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Take Action: <span id="actionItemId">SKU-12345</span></h2>
+        <button class="modal-close" onclick="closeActionModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Action Type</label>
+          <select class="form-select" id="actionType">
+            <option value="raise-min-max">Raise Min/Max</option>
+            <option value="lower-min-max">Lower Min/Max</option>
+            <option value="override-forecast">Override Forecast</option>
+            <option value="adjust-order">Adjust Order Quantity</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Adjustment Value</label>
+          <input type="text" class="form-input" id="adjustmentValue" placeholder="e.g., 25% or specific value">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Reason</label>
+          <select class="form-select" id="actionReason">
+            <option value="seasonal">Seasonal Demand Change</option>
+            <option value="one-time">One-time Event</option>
+            <option value="trend">New Trend Identified</option>
+            <option value="correction">Data Correction</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" id="actionNotes" placeholder="Add details about this action..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-button secondary" onclick="closeActionModal()">Cancel</button>
+        <button class="action-button" onclick="submitAction()">Submit Action</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Suppress Modal -->
+  <div id="suppressModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Suppress Flag: <span id="suppressItemId">SKU-12345</span></h2>
+        <button class="modal-close" onclick="closeSuppressModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Suppression Reason</label>
+          <select class="form-select" id="suppressReason">
+            <option value="one-time">One-time Event</option>
+            <option value="known-issue">Known Issue</option>
+            <option value="false-positive">False Positive</option>
+            <option value="already-handled">Already Handled Elsewhere</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Suppression Duration</label>
+          <select class="form-select" id="suppressDuration">
+            <option value="30">30 days</option>
+            <option value="60">60 days</option>
+            <option value="90">90 days</option>
+            <option value="permanent">Permanent</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" id="suppressNotes" placeholder="Add details about why this flag is being suppressed..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-button secondary" onclick="closeSuppressModal()">Cancel</button>
+        <button class="action-button" onclick="submitSuppression()">Suppress Flag</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
