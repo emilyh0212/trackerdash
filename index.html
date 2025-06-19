@@ -6,6 +6,7 @@
   <title>Mid-Month Deviation Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="dashboard-container">
@@ -49,67 +50,115 @@
     <div class="trend-chart">
       <div class="trend-chart-title">Flagged Items Trend</div>
       <div class="chart-container">
-        <canvas id="trendChart"></canvas>
+        <canvas id="flaggedItemsTrendChart"></canvas>
+      </div>
+    </div>
+
+    <div class="trend-chart">
+      <div class="trend-chart-title">Dollar Impact Trend</div>
+      <div class="chart-container">
+        <canvas id="dollarImpactTrendChart"></canvas>
       </div>
     </div>
     
-    <div class="filters-container">
-      <div class="filter-group">
-        <label class="filter-label">Rule</label>
-        <select class="filter-select">
-          <option value="all">All Rules</option>
-          <option value="rule1">Rule 1: Forecast Breach</option>
-          <option value="rule2">Rule 2: Early Month Acceleration</option>
-          <option value="rule3">Rule 3: Flat → Spike Pattern</option>
-          <option value="rule4">Rule 4: Forecast Undershoot</option>
-          <option value="rule5">Rule 5: Multi-SKU Spike</option>
-        </select>
+    <!-- Bucket Navigation -->
+    <div class="bucket-navigation">
+      <div class="bucket-tabs">
+        <div class="bucket-tab active" data-bucket="critical">
+          <div class="bucket-content">
+            <div class="bucket-title">Critical Deviations</div>
+            <div class="bucket-description">Rule 1/2, Critical severity, >100% deviation</div>
+            <div class="bucket-count" id="critical-count">3</div>
+          </div>
+        </div>
+        
+        <div class="bucket-tab" data-bucket="high-dollar">
+          <div class="bucket-content">
+            <div class="bucket-title">High Dollar Deviations</div>
+            <div class="bucket-description">Dollar variance > $2,000</div>
+            <div class="bucket-count" id="high-dollar-count">5</div>
+          </div>
+        </div>
+        
+        <div class="bucket-tab" data-bucket="pattern-drift">
+          <div class="bucket-content">
+            <div class="bucket-title">Demand Pattern Drift</div>
+            <div class="bucket-description">Pattern changed in last 60 days</div>
+            <div class="bucket-count" id="pattern-drift-count">2</div>
+          </div>
+        </div>
       </div>
       
-      <div class="filter-group">
-        <label class="filter-label">Severity</label>
-        <select class="filter-select">
-          <option value="all">All Severities</option>
-          <option value="critical">Critical</option>
-          <option value="warning">Warning</option>
-          <option value="ontrack">On Track</option>
-        </select>
+      <div class="bucket-actions">
+        <button class="action-button secondary" id="advanced-filters-toggle">
+          Advanced Filters
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <button class="action-button" id="export-csv">Export to CSV</button>
       </div>
-      
-      <div class="filter-group">
-        <label class="filter-label">Tenant</label>
-        <select class="filter-select">
-          <option value="all">All Tenants</option>
-          <option value="behler-young">Behler-Young</option>
-          <option value="worldwide-electric">Worldwide Electric</option>
-          <option value="other-tenant">Other Tenant</option>
-        </select>
-      </div>
-      
-      <div class="filter-group">
-        <label class="filter-label">Status</label>
-        <select class="filter-select">
-          <option value="all">All</option>
-          <option value="unresolved">Unresolved</option>
-          <option value="actioned">Actioned</option>
-          <option value="suppressed">Suppressed</option>
-        </select>
-      </div>
-      
-      <div class="filter-group">
-        <label class="filter-label">Demand Pattern</label>
-        <select class="filter-select">
-          <option value="all">All Patterns</option>
-          <option value="smooth">Smooth</option>
-          <option value="sparse">Sparse</option>
-          <option value="new">New</option>
-          <option value="no-demand">No Demand</option>
-        </select>
-      </div>
-      
-      <div class="filter-group" style="margin-left: auto;">
-        <label class="filter-label">&nbsp;</label>
-        <button class="action-button">Export to CSV</button>
+    </div>
+    
+    <!-- Advanced Filters Drawer -->
+    <div class="advanced-filters-drawer" id="advanced-filters-drawer">
+      <div class="filters-container">
+        <div class="filter-group">
+          <label class="filter-label">Rule</label>
+          <select class="filter-select" id="rule-filter">
+            <option value="all">All Rules</option>
+            <option value="rule1">Rule 1: Forecast Breach</option>
+            <option value="rule2">Rule 2: Early Month Acceleration</option>
+            <option value="rule3">Rule 3: Flat → Spike Pattern</option>
+            <option value="rule4">Rule 4: Forecast Undershoot</option>
+            <option value="rule5">Rule 5: Multi-SKU Spike</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Severity</label>
+          <select class="filter-select" id="severity-filter">
+            <option value="all">All Severities</option>
+            <option value="critical">Critical</option>
+            <option value="warning">Warning</option>
+            <option value="ontrack">On Track</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Tenant</label>
+          <select class="filter-select" id="tenant-filter">
+            <option value="all">All Tenants</option>
+            <option value="behler-young">Behler-Young</option>
+            <option value="worldwide-electric">Worldwide Electric</option>
+            <option value="other-tenant">Other Tenant</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Status</label>
+          <select class="filter-select" id="status-filter">
+            <option value="all">All</option>
+            <option value="unresolved">Unresolved</option>
+            <option value="actioned">Actioned</option>
+            <option value="suppressed">Suppressed</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Demand Pattern</label>
+          <select class="filter-select" id="pattern-filter">
+            <option value="all">All Patterns</option>
+            <option value="smooth">Smooth</option>
+            <option value="sparse">Sparse</option>
+            <option value="new">New</option>
+            <option value="no-demand">No Demand</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <button class="action-button secondary" id="clear-filters">Clear All</button>
+        </div>
       </div>
     </div>
     
@@ -124,8 +173,10 @@
             <th>Deviation</th>
             <th>Day Flagged</th>
             <th>Demand Pattern</th>
+            <th>Recurrence</th>
             <th>Status</th>
             <th>Action Taken</th>
+            <th>Reviewed</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -155,7 +206,7 @@
             </td>
           </tr>
           <tr class="expandable-row">
-            <td colspan="10">
+            <td colspan="12">
               <div class="expandable-content">
                 <div class="expandable-section">
                   <div class="expandable-title">Flag Details</div>
@@ -245,7 +296,7 @@
             </td>
           </tr>
           <tr class="expandable-row">
-            <td colspan="10">
+            <td colspan="12">
               <div class="expandable-content">
                 <div class="expandable-section">
                   <div class="expandable-title">Flag Details</div>
